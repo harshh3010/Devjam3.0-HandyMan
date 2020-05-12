@@ -31,8 +31,11 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         drawerLayout = findViewById(R.id.home_drawer_layout);
         navigationView = findViewById(R.id.home_nav_view);
         View view = navigationView.getHeaderView(0);
-        name_txt = view.findViewById(R.id.nav_header_name_text);
-        email_txt = view.findViewById(R.id.nav_header_email_text);
+        name_txt = view.findViewById(R.id.header_home_nav_name_text);
+        email_txt = view.findViewById(R.id.header_home_nav_email_text);
+
+        name_txt.setText(userApi.getName());
+        email_txt.setText(userApi.getEmail());
 
         navigationView.setNavigationItemSelectedListener(this);
 
