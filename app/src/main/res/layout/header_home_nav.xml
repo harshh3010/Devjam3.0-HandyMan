@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/colorPrimaryDark"
+    android:gravity="bottom"
+    android:padding="16dp"
+    android:theme="@style/ThemeOverlay.AppCompat.Dark">
+
+    <TextView
+    android:id="@+id/header_home_nav_name_text"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="Name"
+    android:textSize="22sp"
+    android:fontFamily="@font/jost"
+    android:textColor="@android:color/white"/>
+
+    <TextView
+        android:id="@+id/header_home_nav_email_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="abc123@example.com"
+        android:textSize="12sp"
+        android:fontFamily="@font/jost"
+        android:textColor="@android:color/white"/>
+
+
+</LinearLayout>
