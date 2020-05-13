@@ -1,5 +1,7 @@
 package com.devjam.handyman.Ui;
 
+import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +12,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.devjam.handyman.CategoryActivity;
 import com.devjam.handyman.Model.Service;
 import com.devjam.handyman.R;
 
@@ -22,6 +25,7 @@ public class ServiceCatergoryAdapter extends RecyclerView.Adapter<ServiceCatergo
 
     private ArrayList<String> myArr;
     private ArrayList<String> myArrFull;
+    private Context context;
 
     public ServiceCatergoryAdapter(ArrayList<String> myArr) {
         this.myArr = myArr;
@@ -32,6 +36,7 @@ public class ServiceCatergoryAdapter extends RecyclerView.Adapter<ServiceCatergo
     @Override
     public ViewHolderClass onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_view_service,parent,false);
+        context = parent.getContext();
         return new ViewHolderClass(view);
     }
 
@@ -84,8 +89,18 @@ public class ServiceCatergoryAdapter extends RecyclerView.Adapter<ServiceCatergo
 
         public ViewHolderClass(@NonNull View itemView) {
             super(itemView);
-
             name_txt = itemView.findViewById(R.id.item_service_name_text);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(!name_txt.getText().toString().isEmpty()){
+                        Intent intent = new Intent(context, CategoryActivity.class);
+                        intent.putExtra("category",name_txt.getText().toString());
+                        context.startActivity(intent);
+                    }
+                }
+            });
         }
     }
 
