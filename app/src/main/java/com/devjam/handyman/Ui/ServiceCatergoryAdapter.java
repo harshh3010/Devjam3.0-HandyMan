@@ -13,29 +13,27 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.devjam.handyman.CategoryActivity;
-import com.devjam.handyman.Model.Service;
 import com.devjam.handyman.R;
 
 import java.util.ArrayList;
-import java.util.Locale;
-
-import io.opencensus.trace.export.RunningSpanStore;
 
 public class ServiceCatergoryAdapter extends RecyclerView.Adapter<ServiceCatergoryAdapter.ViewHolderClass>  implements Filterable {
 
     private ArrayList<String> myArr;
     private ArrayList<String> myArrFull;
     private Context context;
+    private String City;
 
-    public ServiceCatergoryAdapter(ArrayList<String> myArr) {
+    public ServiceCatergoryAdapter(ArrayList<String> myArr,String city) {
         this.myArr = myArr;
         myArrFull = new ArrayList<>(myArr);
+        City = city;
     }
 
     @NonNull
     @Override
     public ViewHolderClass onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_view_service,parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_view_service_category,parent,false);
         context = parent.getContext();
         return new ViewHolderClass(view);
     }
@@ -89,7 +87,7 @@ public class ServiceCatergoryAdapter extends RecyclerView.Adapter<ServiceCatergo
 
         public ViewHolderClass(@NonNull View itemView) {
             super(itemView);
-            name_txt = itemView.findViewById(R.id.item_service_name_text);
+            name_txt = itemView.findViewById(R.id.item_service_category_name_text);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -97,6 +95,7 @@ public class ServiceCatergoryAdapter extends RecyclerView.Adapter<ServiceCatergo
                     if(!name_txt.getText().toString().isEmpty()){
                         Intent intent = new Intent(context, CategoryActivity.class);
                         intent.putExtra("category",name_txt.getText().toString());
+                        intent.putExtra("city",City);
                         context.startActivity(intent);
                     }
                 }

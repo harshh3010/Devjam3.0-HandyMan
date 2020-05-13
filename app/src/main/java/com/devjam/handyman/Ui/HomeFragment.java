@@ -76,7 +76,7 @@ public class HomeFragment extends Fragment {
                 spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        String selectedItem = parent.getItemAtPosition(position).toString();
+                        final String selectedItem = parent.getItemAtPosition(position).toString();
                         db.collection("Cities")
                                 .document(selectedItem)
                                 .collection("Details")
@@ -113,7 +113,7 @@ public class HomeFragment extends Fragment {
                                         for(QueryDocumentSnapshot ds : queryDocumentSnapshots){
                                             serviceCategories.add(ds.getId());
                                         }
-                                        serviceCatergoryAdapter = new ServiceCatergoryAdapter(serviceCategories);
+                                        serviceCatergoryAdapter = new ServiceCatergoryAdapter(serviceCategories,selectedItem);
                                         recyclerView.setAdapter(serviceCatergoryAdapter);
                                         recyclerView.setLayoutManager(new GridLayoutManager(getContext(),2));
 

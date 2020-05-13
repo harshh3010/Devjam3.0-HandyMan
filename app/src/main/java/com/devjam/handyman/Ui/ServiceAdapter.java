@@ -14,14 +14,13 @@ import com.devjam.handyman.Model.Service;
 import com.devjam.handyman.R;
 
 import java.util.ArrayList;
-import java.util.Collection;
 
 public class ServiceAdapter extends RecyclerView.Adapter<ServiceAdapter.ViewHolderClass> implements Filterable {
 
     private ArrayList<Service> myArr;
     private ArrayList<Service> myArrFull;
 
-    public ServiceAdapter(ArrayList<Service> myArr) {
+    public ServiceAdapter(ArrayList<Service> myArr,String city) {
         this.myArr = myArr;
         myArrFull = new ArrayList<>(myArr);
     }
@@ -29,13 +28,14 @@ public class ServiceAdapter extends RecyclerView.Adapter<ServiceAdapter.ViewHold
     @NonNull
     @Override
     public ViewHolderClass onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_view_service,parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_view_service_details,parent,false);
         return new ViewHolderClass(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolderClass holder, int position) {
         holder.name_txt.setText(myArr.get(position).getName());
+        holder.price_txt.setText(myArr.get(position).getCost());
     }
 
     @Override
@@ -77,10 +77,11 @@ public class ServiceAdapter extends RecyclerView.Adapter<ServiceAdapter.ViewHold
     };
 
     public class ViewHolderClass extends RecyclerView.ViewHolder {
-        public TextView name_txt;
+        public TextView name_txt,price_txt;
         public ViewHolderClass(@NonNull View itemView) {
             super(itemView);
             name_txt = itemView.findViewById(R.id.item_service_name_text);
+            price_txt = itemView.findViewById(R.id.item_service_price_text);
         }
     }
 
