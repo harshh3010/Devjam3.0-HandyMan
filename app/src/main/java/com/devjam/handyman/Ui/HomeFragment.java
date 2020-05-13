@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -15,7 +16,11 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.devjam.handyman.Model.Service;
 import com.devjam.handyman.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -33,6 +38,10 @@ public class HomeFragment extends Fragment {
     private ArrayList<String> cities;
     private ArrayAdapter<String> citiesAdapter;
     private TextView zone_txt;
+    private ArrayList<Service> services;
+    private ServiceAdapter servicesAdapter;
+    private RecyclerView recyclerView;
+    private SearchView searchView;
 
     @Nullable
     @Override
@@ -41,6 +50,10 @@ public class HomeFragment extends Fragment {
 
         spinner = view.findViewById(R.id.home_fragment_spinner);
         zone_txt = view.findViewById(R.id.home_fragment_zone_text);
+        recyclerView = view.findViewById(R.id.home_service_recycler_view);
+        searchView = view.findViewById(R.id.home_service_search_view);
+
+        zone_txt.setVisibility(View.GONE);
 
         loadCities();
 
@@ -72,20 +85,62 @@ public class HomeFragment extends Fragment {
                                 .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                     @Override
                                     public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                        zone_txt.setVisibility(View.VISIBLE);
                                         String zone = documentSnapshot.get("zone").toString();
                                         if(zone.equals("green")){
-                                            zone_txt.setText("You are in " + zone + " zone");
+                                            zone_txt.setText("You are in covid-19 " + zone + " zone");
+                                            zone_txt.setTextColor(Color.rgb(0,128,0));
                                         }
                                         if(zone.equals("orange")){
-                                            zone_txt.setText("You are in " + zone + " zone");
+                                            zone_txt.setText("You are in covid-19 " + zone + " zone");
+                                            zone_txt.setTextColor(Color.rgb(255,165,0));
                                         }
                                         if(zone.equals("red")){
-                                            zone_txt.setText("You are in " + zone + " zone");
+                                            zone_txt.setText("You are in covid-19 " + zone + " zone");
+                                            zone_txt.setTextColor(Color.rgb(255,0,0));
                                         }
                                     }
                                 });
 
-                        //TODO : change text color, load services in array.
+                        db.collection("Cities")
+                                .document(selectedItem)
+                                .collection("Services")
+                                .get()
+                                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                        services = new ArrayList<>();
+                                        servicesAdapter = new ServiceAdapter(services);
+                                        for(QueryDocumentSnapshot ds : queryDocumentSnapshots){
+                                            services.add(ds.toObject(Service.class));
+                                        }
+                                        servicesAdapter.notifyDataSetChanged();
+                                        recyclerView.setAdapter(servicesAdapter);
+                                        recyclerView.setLayoutManager(new GridLayoutManager(getContext(),2));
+
+                                        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                                            @Override
+                                            public boolean onQueryTextSubmit(String query) {
+                                                servicesAdapter.getFilter().filter(query);
+                                                servicesAdapter.notifyDataSetChanged();
+                                                return false;
+                                            }
+
+                                            @Override
+                                            public boolean onQueryTextChange(String newText) {
+                                                servicesAdapter.getFilter().filter(newText);
+                                                servicesAdapter.notifyDataSetChanged();
+                                                return false;
+                                            }
+                                        });
+
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(getContext(),"Unable to load services!",Toast.LENGTH_LONG).show();
+                            }
+                        });
                     }
 
                     @Override

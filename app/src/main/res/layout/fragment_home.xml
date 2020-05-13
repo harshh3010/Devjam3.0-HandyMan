@@ -56,6 +56,7 @@
                 android:textColor="#FF4800" />
 
             <SearchView
+                android:id="@+id/home_service_search_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
@@ -65,8 +66,9 @@
                 android:queryHint="Search for a service" />
 
             <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/home_service_recycler_view"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_margin="8dp" />
         </LinearLayout>
     </ScrollView>
