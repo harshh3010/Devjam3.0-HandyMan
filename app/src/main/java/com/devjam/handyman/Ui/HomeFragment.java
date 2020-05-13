@@ -38,8 +38,8 @@ public class HomeFragment extends Fragment {
     private ArrayList<String> cities;
     private ArrayAdapter<String> citiesAdapter;
     private TextView zone_txt;
-    private ArrayList<Service> services;
-    private ServiceAdapter servicesAdapter;
+    private ServiceCatergoryAdapter serviceCatergoryAdapter;
+    private ArrayList<String> serviceCategories;
     private RecyclerView recyclerView;
     private SearchView searchView;
 
@@ -109,31 +109,27 @@ public class HomeFragment extends Fragment {
                                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                                     @Override
                                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                                        services = new ArrayList<>();
-                                        servicesAdapter = new ServiceAdapter(services);
+                                        serviceCategories = new ArrayList<>();
                                         for(QueryDocumentSnapshot ds : queryDocumentSnapshots){
-                                            services.add(ds.toObject(Service.class));
+                                            serviceCategories.add(ds.getId());
                                         }
-                                        servicesAdapter.notifyDataSetChanged();
-                                        recyclerView.setAdapter(servicesAdapter);
+                                        serviceCatergoryAdapter = new ServiceCatergoryAdapter(serviceCategories);
+                                        recyclerView.setAdapter(serviceCatergoryAdapter);
                                         recyclerView.setLayoutManager(new GridLayoutManager(getContext(),2));
 
                                         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                                             @Override
                                             public boolean onQueryTextSubmit(String query) {
-                                                servicesAdapter.getFilter().filter(query);
-                                                servicesAdapter.notifyDataSetChanged();
+                                                serviceCatergoryAdapter.getFilter().filter(query);
                                                 return false;
                                             }
 
                                             @Override
                                             public boolean onQueryTextChange(String newText) {
-                                                servicesAdapter.getFilter().filter(newText);
-                                                servicesAdapter.notifyDataSetChanged();
+                                                serviceCatergoryAdapter.getFilter().filter(newText);
                                                 return false;
                                             }
                                         });
-
                                     }
                                 }).addOnFailureListener(new OnFailureListener() {
                             @Override
