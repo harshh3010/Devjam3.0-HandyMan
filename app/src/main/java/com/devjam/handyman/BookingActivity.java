@@ -170,10 +170,11 @@ public class BookingActivity extends AppCompatActivity {
 
         Booking booking = new Booking();
         booking.setId("docId");
-        booking.setServiceId(service.getId());
+        booking.setServiceId(service.getName());
         booking.setTime(Time);
         booking.setDate(Date);
         booking.setStatus("Pending");
+        booking.setPrice(service.getCost());
 
         String id = db.collection("Users")
                 .document(userApi.getEmail())

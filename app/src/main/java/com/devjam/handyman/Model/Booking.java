@@ -6,6 +6,7 @@ public class Booking {
     private String Date;
     private String Time;
     private String Status;
+    private String Price;
 
     public Booking() {
     }
@@ -16,6 +17,14 @@ public class Booking {
         Date = date;
         Time = time;
         Status = status;
+    }
+
+    public String getPrice() {
+        return Price;
+    }
+
+    public void setPrice(String price) {
+        Price = price;
     }
 
     public String getId() {

@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.devjam.handyman.Ui.HomeFragment;
+import com.devjam.handyman.Ui.MyBookingsFragment;
 import com.devjam.handyman.Ui.NotificationFragment;
 import com.devjam.handyman.Ui.ProfileFragment;
 import com.devjam.handyman.Util.UserApi;
@@ -74,6 +75,9 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 break;
             case R.id.navigation_profile :
                 getSupportFragmentManager().beginTransaction().replace(R.id.home_fragment_container, new ProfileFragment()).commit();
+                break;
+            case R.id.navigation_bookings :
+                getSupportFragmentManager().beginTransaction().replace(R.id.home_fragment_container, new MyBookingsFragment()).commit();
                 break;
         }
 
