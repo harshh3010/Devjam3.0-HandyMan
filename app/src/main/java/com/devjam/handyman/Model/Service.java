@@ -1,6 +1,8 @@
 package com.devjam.handyman.Model;
 
-public class Service {
+import java.io.Serializable;
+
+public class Service implements Serializable {
     private String Id;
     private String Name;
     private String Description;
