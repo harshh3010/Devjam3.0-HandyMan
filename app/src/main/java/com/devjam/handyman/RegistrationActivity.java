@@ -76,7 +76,7 @@ public class RegistrationActivity extends AppCompatActivity {
 
     private void registerUser(){
 
-        pd = new ProgressDialog(RegistrationActivity.this);
+        pd = new ProgressDialog(RegistrationActivity.this,R.style.AppCompatAlertDialogStyle);
         pd.setMessage("Please wait...");
         pd.show();
 

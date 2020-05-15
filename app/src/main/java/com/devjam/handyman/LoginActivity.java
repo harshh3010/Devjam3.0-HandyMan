@@ -40,7 +40,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                pd = new ProgressDialog(LoginActivity.this);
+                pd = new ProgressDialog(LoginActivity.this,R.style.AppCompatAlertDialogStyle);
                 pd.setMessage("Please wait...");
                 pd.show();
 
