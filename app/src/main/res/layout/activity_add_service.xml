@@ -41,6 +41,7 @@
                     android:background="@color/colorPrimary">
 
                     <RadioGroup
+                        android:id="@+id/add_service_category_rg"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
@@ -59,7 +60,8 @@
                             android:layout_marginTop="2dp"
                             android:backgroundTint="@color/colorAccent"
                             android:text="AC Service and Repair"
-                            android:textColor="@color/colorAccent" />
+                            android:textColor="@color/colorAccent"
+                            android:checked="true"/>
 
                         <RadioButton
                             android:id="@+id/add_service_appliance_rb"
@@ -153,6 +155,18 @@
                 android:layout_marginBottom="16dp"
                 android:background="@color/colorPrimary"
                 android:text="Add Service"
+                android:textAllCaps="false"
+                android:textColor="@color/colorAccent" />
+
+            <Button
+                android:id="@+id/add_service_logout_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginBottom="16dp"
+                android:background="@color/colorPrimary"
+                android:text="Logout"
                 android:textAllCaps="false"
                 android:textColor="@color/colorAccent" />
 
