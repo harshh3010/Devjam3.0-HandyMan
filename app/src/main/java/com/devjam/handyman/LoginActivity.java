@@ -67,6 +67,13 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(new Intent(LoginActivity.this,RegistrationActivity.class));
             }
         });
+
+        findViewById(R.id.login_admin_text).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loginAsAdmin();
+            }
+        });
     }
 
     private void loginUser(){
@@ -97,4 +104,12 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    private void loginAsAdmin(){
+        if(email_txt.getText().toString().trim().equals("harsh.gyanchandani@gmail.com") && pass_txt.getText().toString().equals("harsh123")){
+            startActivity(new Intent(LoginActivity.this,AddServiceActivity.class));
+            finish();
+        }else{
+            Toast.makeText(LoginActivity.this,"Please enter valid email and password.",Toast.LENGTH_LONG).show();
+        }
+    }
 }
