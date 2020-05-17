@@ -6,7 +6,19 @@
     android:orientation="vertical" >
 
 
+    <ProgressBar
+        android:id="@+id/home_fragment_progress_bar"
+        style="@style/ProgressBarTheme"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@drawable/progress"/>
+
     <ScrollView
+        android:id="@+id/home_fragment_scroll_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -17,7 +29,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/textView4"
@@ -66,7 +78,7 @@
                 android:queryHint="Search for a category" />
 
             <TextView
-                android:id="@+id/textView10"
+                android:id="@+id/home_fragment_available_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/jost"
@@ -75,11 +87,22 @@
                 android:text="Services available in your area"
                 android:textColor="@color/colorPrimaryDark" />
 
+            <ProgressBar
+                android:id="@+id/home_fragment_categories_progress_bar"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="@drawable/progress"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="20dp"/>
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/home_service_recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp" />
+                android:layout_margin="8dp" >
+
+            </androidx.recyclerview.widget.RecyclerView>
         </LinearLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

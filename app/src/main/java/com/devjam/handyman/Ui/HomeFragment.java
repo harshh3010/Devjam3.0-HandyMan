@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -37,11 +39,13 @@ public class HomeFragment extends Fragment {
     private Spinner spinner;
     private ArrayList<String> cities;
     private ArrayAdapter<String> citiesAdapter;
-    private TextView zone_txt;
+    private TextView zone_txt,available_txt;
     private ServiceCatergoryAdapter serviceCatergoryAdapter;
     private ArrayList<String> serviceCategories;
     private RecyclerView recyclerView;
     private SearchView searchView;
+    private ProgressBar progressBar1,progressBar2;
+    private ScrollView scrollView;
 
     @Nullable
     @Override
@@ -52,8 +56,19 @@ public class HomeFragment extends Fragment {
         zone_txt = view.findViewById(R.id.home_fragment_zone_text);
         recyclerView = view.findViewById(R.id.home_service_recycler_view);
         searchView = view.findViewById(R.id.home_service_search_view);
+        progressBar1 = view.findViewById(R.id.home_fragment_progress_bar);
+        scrollView = view.findViewById(R.id.home_fragment_scroll_view);
+        progressBar2 = view.findViewById(R.id.home_fragment_categories_progress_bar);
+        available_txt = view.findViewById(R.id.home_fragment_available_text);
 
+        scrollView.setVisibility(View.GONE);
+        progressBar1.setVisibility(View.VISIBLE);
+
+        progressBar2.setVisibility(View.VISIBLE);
+        recyclerView.setVisibility(View.GONE);
         zone_txt.setVisibility(View.GONE);
+        searchView.setVisibility(View.GONE);
+        available_txt.setVisibility(View.GONE);
 
         loadCities();
 
@@ -73,9 +88,19 @@ public class HomeFragment extends Fragment {
                 citiesAdapter = new ArrayAdapter<>(getContext(),android.R.layout.simple_spinner_item,cities);
                 spinner.setAdapter(citiesAdapter);
 
+                scrollView.setVisibility(View.VISIBLE);
+                progressBar1.setVisibility(View.GONE);
+
                 spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                        progressBar2.setVisibility(View.VISIBLE);
+                        recyclerView.setVisibility(View.GONE);
+                        zone_txt.setVisibility(View.GONE);
+                        searchView.setVisibility(View.GONE);
+                        available_txt.setVisibility(View.GONE);
+
                         final String selectedItem = parent.getItemAtPosition(position).toString();
                         db.collection("Cities")
                                 .document(selectedItem)
@@ -85,7 +110,6 @@ public class HomeFragment extends Fragment {
                                 .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                     @Override
                                     public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                        zone_txt.setVisibility(View.VISIBLE);
                                         String zone = documentSnapshot.get("zone").toString();
                                         if(zone.equals("green")){
                                             zone_txt.setText("You are in covid-19 " + zone + " zone");
@@ -116,6 +140,12 @@ public class HomeFragment extends Fragment {
                                         serviceCatergoryAdapter = new ServiceCatergoryAdapter(serviceCategories,selectedItem);
                                         recyclerView.setAdapter(serviceCatergoryAdapter);
                                         recyclerView.setLayoutManager(new GridLayoutManager(getContext(),2));
+
+                                        recyclerView.setVisibility(View.VISIBLE);
+                                        progressBar2.setVisibility(View.GONE);
+                                        searchView.setVisibility(View.VISIBLE);
+                                        available_txt.setVisibility(View.VISIBLE);
+                                        zone_txt.setVisibility(View.VISIBLE);
 
                                         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                                             @Override

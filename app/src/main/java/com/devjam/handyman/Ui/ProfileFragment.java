@@ -48,8 +48,7 @@ public class ProfileFragment extends Fragment {
         contact_txt = view.findViewById(R.id.profile_fragment_contact_text);
 
         ((TextView) view.findViewById(R.id.profile_fragment_name_text)).setText(userApi.getName());
-        ((TextView) view.findViewById(R.id.profile_fragment_name_text)).setText(userApi.getName());
-        ((TextView) view.findViewById(R.id.profile_fragment_name_text)).setText(userApi.getName());
+        ((TextView) view.findViewById(R.id.profile_fragment_email_text)).setText(userApi.getEmail());
         address_txt.setText(userApi.getAddress());
         pincode_txt.setText(String.valueOf(userApi.getPincode()));
         contact_txt.setText(String.valueOf(userApi.getContact()));

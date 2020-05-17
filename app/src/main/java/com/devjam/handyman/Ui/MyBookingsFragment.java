@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -31,6 +33,8 @@ public class MyBookingsFragment extends Fragment {
     private ArrayList<Booking> bookings;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private UserApi userApi = UserApi.getInstance();
+    private TextView textView;
+    private ProgressBar progressBar;
 
     @Nullable
     @Override
@@ -38,6 +42,12 @@ public class MyBookingsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_bookings,container,false);
 
         recyclerView = view.findViewById(R.id.my_bookings_recycler_view);
+        textView = view.findViewById(R.id.bookings_fragment_text_view);
+        progressBar = view.findViewById(R.id.bookings_fragment_progress_bar);
+
+        progressBar.setVisibility(View.VISIBLE);
+        recyclerView.setVisibility(View.GONE);
+        textView.setVisibility(View.GONE);
 
         loadBookings();
 
@@ -59,6 +69,13 @@ public class MyBookingsFragment extends Fragment {
                         adapter = new BookingsAdapter(bookings);
                         recyclerView.setAdapter(adapter);
                         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+                        if(bookings.isEmpty()){
+                            textView.setVisibility(View.VISIBLE);
+                        }else{
+                            recyclerView.setVisibility(View.VISIBLE);
+                        }
+                        progressBar.setVisibility(View.GONE);
                     }
                 }).addOnFailureListener(new OnFailureListener() {
             @Override

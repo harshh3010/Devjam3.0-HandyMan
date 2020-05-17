@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.devjam.handyman.Model.Service;
@@ -28,6 +29,7 @@ public class CategoryActivity extends AppCompatActivity {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private ArrayList<Service> services;
     private ServiceAdapter adapter;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +37,10 @@ public class CategoryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_category);
 
         recyclerView = findViewById(R.id.category_service_recycler_view);
+        progressBar = findViewById(R.id.category_activity_progress_bar);
+
+        progressBar.setVisibility(View.VISIBLE);
+        recyclerView.setVisibility(View.GONE);
 
         city = getIntent().getStringExtra("city");
         category = getIntent().getStringExtra("category");
@@ -67,8 +73,10 @@ public class CategoryActivity extends AppCompatActivity {
                         }
                         adapter = new ServiceAdapter(services,city);
                         recyclerView.setAdapter(adapter);
-                        recyclerView.setLayoutManager(new LinearLayoutManager(CategoryActivity.this
-                        ));
+                        recyclerView.setLayoutManager(new LinearLayoutManager(CategoryActivity.this));
+
+                        recyclerView.setVisibility(View.VISIBLE);
+                        progressBar.setVisibility(View.GONE);
                     }
                 });
     }
