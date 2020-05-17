@@ -46,8 +46,12 @@ public class BookingActivity extends AppCompatActivity {
 
         ((TextView) findViewById(R.id.booking_title_text)).setText(service.getName());
         ((TextView) findViewById(R.id.booking_service_name_text)).setText(service.getName());
-        ((TextView) findViewById(R.id.booking_service_description_text)).setText(service.getDescription());
-        ((TextView) findViewById(R.id.booking_service_price_text)).setText(service.getCost());
+        ((TextView) findViewById(R.id.booking_service_description_text)).setText("Description : " + service.getDescription());
+        if(service.getCost().equals("0")){
+            ((TextView) findViewById(R.id.booking_service_price_text)).setText("Cost : Not Fixed");
+        }else{
+            ((TextView) findViewById(R.id.booking_service_price_text)).setText("Cost : Rs. " + service.getCost());
+        }
 
         findViewById(R.id.booking_choose_date_button).setOnClickListener(new View.OnClickListener() {
             @Override
