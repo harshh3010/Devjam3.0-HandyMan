@@ -31,6 +31,7 @@ public class RegistrationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
 
+        // Initializing required fields
         name_txt = findViewById(R.id.registration_name_text);
         email_txt = findViewById(R.id.registration_email_text);
         pwd_txt = findViewById(R.id.registration_password_text);
@@ -39,9 +40,12 @@ public class RegistrationActivity extends AppCompatActivity {
         pincode_txt = findViewById(R.id.registration_pincode_text);
         contact_txt = findViewById(R.id.registration_contact_text);
 
+        // Adding on click listener to the SignUp button
         findViewById(R.id.registration_signup_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                // Checking for empty fields and accordingly displaying an error message
                 if(!name_txt.getText().toString().isEmpty()
                         && !email_txt.getText().toString().isEmpty()
                         && !pwd_txt.getText().toString().isEmpty()
@@ -50,7 +54,9 @@ public class RegistrationActivity extends AppCompatActivity {
                         && !address_txt.getText().toString().isEmpty()
                         && !contact_txt.getText().toString().isEmpty()
                 ){
+                    // Matching the confirmation password with the created one
                     if(confirm_pwd_txt.getText().toString().equals(pwd_txt.getText().toString())){
+                        // In case of no issues, calling the registerUser() method
                         registerUser();
                     }else{
                         confirm_pwd_txt.setError("Confirmation password doesn't  match with the one you created.");
@@ -76,17 +82,22 @@ public class RegistrationActivity extends AppCompatActivity {
 
     private void registerUser(){
 
+        // Displaying a progress dialog until the background tasks get completed
         pd = new ProgressDialog(RegistrationActivity.this,R.style.AppCompatAlertDialogStyle);
         pd.setMessage("Please wait...");
         pd.show();
 
+        // Registering the user with Firebase Authentication
         firebaseAuth
                 .createUserWithEmailAndPassword(email_txt.getText().toString().trim(),pwd_txt.getText().toString().trim())
                 .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                     @Override
                     public void onSuccess(AuthResult authResult) {
+
+                        // On success, storing user's data to Firebase Firestore
                         FirebaseUser firebaseUser = authResult.getUser();
                         User user = new User();
+                        assert firebaseUser != null;
                         user.setId(firebaseUser.getUid());
                         user.setName(name_txt.getText().toString().trim());
                         user.setPincode(Integer.parseInt(pincode_txt.getText().toString()));
@@ -100,6 +111,8 @@ public class RegistrationActivity extends AppCompatActivity {
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
+
+                                        // On successfully storing the data, dismissing the dialog, displaying a toast message and redirecting the user to login screen
                                         pd.dismiss();
                                         Toast.makeText(RegistrationActivity.this,"Unable to register!",Toast.LENGTH_LONG).show();
                                         startActivity(new Intent(RegistrationActivity.this,LoginActivity.class));
@@ -108,6 +121,7 @@ public class RegistrationActivity extends AppCompatActivity {
                                 }).addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
+                                // On failure, dismissing the dialog and displaying a toast message
                                 pd.dismiss();
                                 Toast.makeText(RegistrationActivity.this,"An error occured!",Toast.LENGTH_LONG).show();
                             }
@@ -116,6 +130,7 @@ public class RegistrationActivity extends AppCompatActivity {
                 }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
+                // On failure in registering the user, displaying a toast and dismissing the progress dialog
                 pd.dismiss();
                 Toast.makeText(RegistrationActivity.this,"Unable to register!",Toast.LENGTH_LONG).show();
             }
