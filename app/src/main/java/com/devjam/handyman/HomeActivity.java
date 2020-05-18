@@ -4,11 +4,13 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.devjam.handyman.Ui.HomeFragment;
 import com.devjam.handyman.Ui.MyBookingsFragment;
@@ -21,8 +23,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
     private UserApi userApi = UserApi.getInstance();
     private DrawerLayout drawerLayout;
-    private NavigationView navigationView;
-    private TextView name_txt,email_txt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,10 +30,10 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_home);
 
         drawerLayout = findViewById(R.id.home_drawer_layout);
-        navigationView = findViewById(R.id.home_nav_view);
+        NavigationView navigationView = findViewById(R.id.home_nav_view);
         View view = navigationView.getHeaderView(0);
-        name_txt = view.findViewById(R.id.header_home_nav_name_text);
-        email_txt = view.findViewById(R.id.header_home_nav_email_text);
+        TextView name_txt = view.findViewById(R.id.header_home_nav_name_text);
+        TextView email_txt = view.findViewById(R.id.header_home_nav_email_text);
 
         name_txt.setText(userApi.getName());
         email_txt.setText(userApi.getEmail());
@@ -47,8 +47,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
-        if(savedInstanceState == null){
-            getSupportFragmentManager().beginTransaction().replace(R.id.home_fragment_container,new HomeFragment()).commit();
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.home_fragment_container, new HomeFragment()).commit();
             navigationView.setCheckedItem(R.id.navigation_home);
         }
 
@@ -57,31 +57,53 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void onBackPressed() {
 
-        if(drawerLayout.isDrawerOpen(Gravity.LEFT)){
+        if (drawerLayout.isDrawerOpen(Gravity.LEFT)) {
             drawerLayout.closeDrawer(Gravity.LEFT);
-        }else{
+        } else {
             super.onBackPressed();
         }
     }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-        switch (menuItem.getItemId()){
-            case R.id.navigation_home :
-                getSupportFragmentManager().beginTransaction().replace(R.id.home_fragment_container,new HomeFragment()).commit();
+        switch (menuItem.getItemId()) {
+            case R.id.navigation_home:
+                getSupportFragmentManager().beginTransaction().replace(R.id.home_fragment_container, new HomeFragment()).commit();
+                drawerLayout.closeDrawer(Gravity.LEFT);
                 break;
-            case R.id.navigation_notifications :
+            case R.id.navigation_notifications:
                 getSupportFragmentManager().beginTransaction().replace(R.id.home_fragment_container, new NotificationFragment()).commit();
+                drawerLayout.closeDrawer(Gravity.LEFT);
                 break;
-            case R.id.navigation_profile :
+            case R.id.navigation_profile:
                 getSupportFragmentManager().beginTransaction().replace(R.id.home_fragment_container, new ProfileFragment()).commit();
+                drawerLayout.closeDrawer(Gravity.LEFT);
                 break;
-            case R.id.navigation_bookings :
+            case R.id.navigation_bookings:
                 getSupportFragmentManager().beginTransaction().replace(R.id.home_fragment_container, new MyBookingsFragment()).commit();
+                drawerLayout.closeDrawer(Gravity.LEFT);
+                break;
+            case R.id.navigation_share:
+                shareApp();
+                break;
+            case R.id.navigation_help:
+                Toast.makeText(HomeActivity.this,"For any queries, you can mail us at harsh.gyanchandani@gmail.com",Toast.LENGTH_LONG).show();
                 break;
         }
-
-        drawerLayout.closeDrawer(Gravity.LEFT);
         return true;
+    }
+
+    private void shareApp() {
+
+        Intent intent = new Intent(android.content.Intent.ACTION_SEND);
+        intent.setType("text/plain");
+
+        String message = "Unable to get basic home services during this lockdown?\nDownload HandyMan App, we will be ready for help 24x7.\n\ndownloadlinkforhandyman.com";
+        String subject = "Download HandyMan App";
+
+        intent.putExtra(android.content.Intent.EXTRA_SUBJECT, subject);
+        intent.putExtra(android.content.Intent.EXTRA_TEXT, message);
+
+        startActivity(Intent.createChooser(intent, "Choose an app"));
     }
 }
