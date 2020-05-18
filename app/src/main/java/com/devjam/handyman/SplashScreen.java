@@ -16,6 +16,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.Objects;
+
 public class SplashScreen extends AppCompatActivity {
 
     private FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
@@ -40,7 +42,7 @@ public class SplashScreen extends AppCompatActivity {
                     // Loading user's data from Firebase firestore
 
                     db.collection("Users")
-                            .document(firebaseAuth.getCurrentUser().getEmail())
+                            .document(Objects.requireNonNull(firebaseAuth.getCurrentUser().getEmail()))
                             .get()
                             .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                 @Override
@@ -49,6 +51,7 @@ public class SplashScreen extends AppCompatActivity {
                                     // On successfully loading the data, storing it in the userApi object
 
                                     User user = documentSnapshot.toObject(User.class);
+                                    assert user != null;
                                     userApi.setId(user.getId());
                                     userApi.setName(user.getName());
                                     userApi.setEmail(user.getEmail());
