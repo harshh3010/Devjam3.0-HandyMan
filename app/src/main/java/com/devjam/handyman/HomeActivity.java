@@ -30,17 +30,21 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        // Initializing the required fields
         drawerLayout = findViewById(R.id.home_drawer_layout);
         NavigationView navigationView = findViewById(R.id.home_nav_view);
         View view = navigationView.getHeaderView(0);
         TextView name_txt = view.findViewById(R.id.header_home_nav_name_text);
         TextView email_txt = view.findViewById(R.id.header_home_nav_email_text);
 
+        // Setting the Name and Email of the user in Navigation Header
         name_txt.setText(userApi.getName());
         email_txt.setText(userApi.getEmail());
 
+        // Attaching item click listener to Navigation View
         navigationView.setNavigationItemSelectedListener(this);
 
+        // Opening the drawer on clicking the menu icon
         findViewById(R.id.home_drawer_menu_image).setOnClickListener(new View.OnClickListener() {
             @SuppressLint("RtlHardcoded")
             @Override
@@ -56,6 +60,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
+    // Closing the opened drawer on pressing back button
     @SuppressLint("RtlHardcoded")
     @Override
     public void onBackPressed() {
@@ -70,6 +75,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     @SuppressLint("RtlHardcoded")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+
+        // Performing the corresponding tasks on clicking the Navigation menu items
         switch (menuItem.getItemId()) {
             case R.id.navigation_home:
                 getSupportFragmentManager().beginTransaction().replace(R.id.home_fragment_container, new HomeFragment()).commit();
@@ -97,6 +104,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
+    // A function for sharing the handyman app
     private void shareApp() {
 
         Intent intent = new Intent(android.content.Intent.ACTION_SEND);
