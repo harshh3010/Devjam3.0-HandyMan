@@ -3,6 +3,7 @@ package com.devjam.handyman;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
@@ -37,13 +38,16 @@ public class BookingActivity extends AppCompatActivity {
     private UserApi userApi = UserApi.getInstance();
     private ProgressDialog pd;
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_booking);
 
+        // Fetching the service object from category activity
         service = (Service) getIntent().getSerializableExtra("service");
 
+        // Displaying the service details in respective fields
         ((TextView) findViewById(R.id.booking_title_text)).setText(service.getName());
         ((TextView) findViewById(R.id.booking_service_name_text)).setText(service.getName());
         ((TextView) findViewById(R.id.booking_service_description_text)).setText("Description : " + service.getDescription());
@@ -53,6 +57,7 @@ public class BookingActivity extends AppCompatActivity {
             ((TextView) findViewById(R.id.booking_service_price_text)).setText("Cost : Rs. " + service.getCost());
         }
 
+        // on click listener for choose date button
         findViewById(R.id.booking_choose_date_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -60,9 +65,12 @@ public class BookingActivity extends AppCompatActivity {
             }
         });
 
+        // on click listener for choose time button
         findViewById(R.id.booking_choose_time_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                // Allowing choosing the time only after date has been chosen
                 if (Date != null) {
                     chooseTime();
                 } else {
@@ -72,9 +80,12 @@ public class BookingActivity extends AppCompatActivity {
             }
         });
 
+        // on click listener for Confirm Booking button
         findViewById(R.id.booking_confirm_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                // Performing task only after time has been chosen
                 if (Time != null) {
                     confirmBooking();
                 } else {
@@ -83,6 +94,7 @@ public class BookingActivity extends AppCompatActivity {
             }
         });
 
+        // Closing the activity on pressing back button
         findViewById(R.id.booking_back_image).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -90,10 +102,12 @@ public class BookingActivity extends AppCompatActivity {
             }
         });
 
+        // Creating listener for Date picker dialog
         dateSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
 
+                // Displaying the chosen date on the button
                 if (isAfterToday(year, month, dayOfMonth)) {
                     Date = dayOfMonth + "/" + (month + 1) + "/" + year;
                     ((Button) findViewById(R.id.booking_choose_date_button)).setText(Date);
@@ -107,6 +121,7 @@ public class BookingActivity extends AppCompatActivity {
             }
         };
 
+        // Creating listener for Time picker dialog
         timeSetListener = new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
@@ -114,12 +129,14 @@ public class BookingActivity extends AppCompatActivity {
                 Calendar today = Calendar.getInstance();
                 Calendar myDate = Calendar.getInstance();
 
+                // Displaying the chosen time on the button after ensuring that the time chosen is 1 hour later from current time
                 myDate.set(y, m, d);
                 if (myDate.equals(today)) {
                     Calendar datetime = Calendar.getInstance();
                     Calendar c = Calendar.getInstance();
                     datetime.set(Calendar.HOUR_OF_DAY, hourOfDay);
                     datetime.set(Calendar.MINUTE, minute);
+
                     if (datetime.getTimeInMillis() > c.getTimeInMillis() + 1000 * 60 * 60) {
                         Time = hourOfDay + ":" + minute;
                         ((Button) findViewById(R.id.booking_choose_time_button)).setText(Time);
@@ -134,7 +151,10 @@ public class BookingActivity extends AppCompatActivity {
         };
     }
 
+    // Method to choose a date
     private void chooseDate() {
+
+        // Displaying a dialog for choosing a date
         Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH);
@@ -150,7 +170,10 @@ public class BookingActivity extends AppCompatActivity {
 
     }
 
+    // Method to choose a time
     private void chooseTime() {
+
+        // Displaying a dialog for choosing a time
         Calendar calendar = Calendar.getInstance();
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int minute = calendar.get(Calendar.MINUTE);
@@ -166,8 +189,10 @@ public class BookingActivity extends AppCompatActivity {
 
     }
 
+    // Method to confirm the booking
     private void confirmBooking() {
 
+        // Displaying a progress dialog until background tasks are over
         pd = new ProgressDialog(BookingActivity.this, R.style.AppCompatAlertDialogStyle);
         pd.setMessage("Please wait...");
         pd.show();
@@ -180,6 +205,7 @@ public class BookingActivity extends AppCompatActivity {
         booking.setStatus("Pending");
         booking.setPrice(service.getCost());
 
+        // Getting the id of newly created firestore document and updating the booking object
         String id = db.collection("Users")
                 .document(userApi.getEmail())
                 .collection("Bookings")
@@ -188,6 +214,7 @@ public class BookingActivity extends AppCompatActivity {
 
         booking.setId(id);
 
+        // Uploading the data to firebase firestore
         db.collection("Users")
                 .document(userApi.getEmail())
                 .collection("Bookings")
@@ -195,6 +222,7 @@ public class BookingActivity extends AppCompatActivity {
                 .set(booking).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
+                // On success, dismissing the dialog, displaying a toast and closing the activity
                 pd.dismiss();
                 Toast.makeText(BookingActivity.this, "Booking confirmed!", Toast.LENGTH_SHORT).show();
                 finish();
@@ -202,12 +230,14 @@ public class BookingActivity extends AppCompatActivity {
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
+                // On failure, dismissing the dialog and displaying a toast message
                 pd.dismiss();
                 Toast.makeText(BookingActivity.this, "An error occurred!", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
+    // Method to check if the entered date is after today or not
     private static boolean isAfterToday(int year, int month, int day) {
         Calendar today = Calendar.getInstance();
         Calendar myDate = Calendar.getInstance();
