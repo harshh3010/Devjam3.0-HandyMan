@@ -1,7 +1,6 @@
 package com.devjam.handyman;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
@@ -16,10 +15,7 @@ import android.widget.Toast;
 import com.devjam.handyman.Model.Service;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,8 +31,10 @@ public class AddServiceActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_service);
 
+        // Initializing the required fields
         radioGroup = findViewById(R.id.add_service_category_rg);
 
+        // on click listener for Add Service Button
         findViewById(R.id.add_service_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -44,6 +42,8 @@ public class AddServiceActivity extends AppCompatActivity {
             }
         });
 
+
+        // Redirecting to login activity after clicking the logout button
         findViewById(R.id.add_service_logout_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -53,19 +53,24 @@ public class AddServiceActivity extends AppCompatActivity {
         });
     }
 
+    // method to add service to firebase firestore
     private void addService() {
 
+        // Displaying a progress dialog until background tasks are over
         pd = new ProgressDialog(AddServiceActivity.this, R.style.AppCompatAlertDialogStyle);
         pd.setMessage("Please wait...");
         pd.show();
 
+        // Ensuring that the required fields are not left empty
         if (!((EditText) findViewById(R.id.add_service_city_text)).getText().toString().isEmpty()
                 && !((EditText) findViewById(R.id.add_service_name_text)).getText().toString().isEmpty()
                 && !((EditText) findViewById(R.id.add_service_desc_text)).getText().toString().isEmpty()
                 && !((EditText) findViewById(R.id.add_service_price_text)).getText().toString().isEmpty()) {
 
+            // Creating a dummy data to upload while creating documents
             final Map<String, Object> dummyMap = new HashMap<>();
 
+            // Creating a document with the city's name
             db.collection("Cities")
                     .document(((EditText) findViewById(R.id.add_service_city_text)).getText().toString().trim())
                     .set(dummyMap)
@@ -76,12 +81,16 @@ public class AddServiceActivity extends AppCompatActivity {
                             Map<String, Object> data = new HashMap<>();
                             data.put("zone","green");
 
+                            //TODO : load zone from firestore collection
+
+                            // Initially setting the city as green zone
                             db.collection("Cities")
                                     .document(((EditText) findViewById(R.id.add_service_city_text)).getText().toString().trim())
                                     .collection("Details")
                                     .document("Zone")
                                     .set(data);
 
+                            // Creating a document based on selected category
                             db.collection("Cities")
                                     .document(((EditText) findViewById(R.id.add_service_city_text)).getText().toString().trim())
                                     .collection("Services")
@@ -96,6 +105,7 @@ public class AddServiceActivity extends AppCompatActivity {
                                     service.setCost(((EditText) findViewById(R.id.add_service_price_text)).getText().toString().trim());
                                     service.setId(((EditText) findViewById(R.id.add_service_name_text)).getText().toString().trim());
 
+                                    // Creating a document with service name and storing the service object in this document
                                     db.collection("Cities")
                                             .document(((EditText) findViewById(R.id.add_service_city_text)).getText().toString().trim())
                                             .collection("Services")
@@ -106,12 +116,16 @@ public class AddServiceActivity extends AppCompatActivity {
                                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
                                                 public void onSuccess(Void aVoid) {
+
+                                                    // On successfully storing data, dismissing the dialog and displaying a toast message
                                                     pd.dismiss();
                                                     Toast.makeText(AddServiceActivity.this, "Service added successfully!", Toast.LENGTH_SHORT).show();
                                                 }
                                             }).addOnFailureListener(new OnFailureListener() {
                                         @Override
                                         public void onFailure(@NonNull Exception e) {
+
+                                            // On failure, dismissing the dialog and displaying a toast message
                                             pd.dismiss();
                                             Toast.makeText(AddServiceActivity.this, "Unable to add service!", Toast.LENGTH_SHORT).show();
                                         }
@@ -133,6 +147,8 @@ public class AddServiceActivity extends AppCompatActivity {
                 }
             });
         } else {
+
+            // Displaying error message if required fields are not filled
             if (((EditText) findViewById(R.id.add_service_city_text)).getText().toString().isEmpty())
                 ((EditText) findViewById(R.id.add_service_city_text)).setError("This field cannot be empty.");
 
