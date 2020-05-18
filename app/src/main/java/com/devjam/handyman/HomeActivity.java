@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -41,6 +42,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setNavigationItemSelectedListener(this);
 
         findViewById(R.id.home_drawer_menu_image).setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("RtlHardcoded")
             @Override
             public void onClick(View v) {
                 drawerLayout.openDrawer(Gravity.LEFT);
@@ -54,6 +56,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
+    @SuppressLint("RtlHardcoded")
     @Override
     public void onBackPressed() {
 
@@ -64,6 +67,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
+    @SuppressLint("RtlHardcoded")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         switch (menuItem.getItemId()) {
