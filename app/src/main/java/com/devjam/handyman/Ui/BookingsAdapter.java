@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,6 +36,7 @@ public class BookingsAdapter extends RecyclerView.Adapter<BookingsAdapter.ViewHo
     @NonNull
     @Override
     public ViewHolderClass onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        // Inflating the item view to be displayed in recyclerview
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_view_bookings,parent,false);
         context = parent.getContext();
         return  new ViewHolderClass(view);
@@ -44,18 +44,24 @@ public class BookingsAdapter extends RecyclerView.Adapter<BookingsAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolderClass holder, final int position) {
+
+        // Displaying the necessary data in their respective fields
         holder.name_txt.setText(myArr.get(position).getServiceId());
         holder.date_txt.setText(myArr.get(position).getDate());
         holder.time_txt.setText(myArr.get(position).getTime());
         holder.price_txt.setText(myArr.get(position).getPrice());
 
+        // On click listener for cancel booking button
         holder.cancel_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                // Displaying a progress dialog until the background tasks are complete
                 pd = new ProgressDialog(context,R.style.AppCompatAlertDialogStyle);
                 pd.setMessage("Please wait...");
                 pd.show();
 
+                // Deleting the data from firebase firestore
                 db.collection("Users")
                         .document(userApi.getEmail())
                         .collection("Bookings")
@@ -64,6 +70,8 @@ public class BookingsAdapter extends RecyclerView.Adapter<BookingsAdapter.ViewHo
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
+
+                                // On success, removing the cancelled booking from recyclerview
                                 myArr.remove(position);
                                 notifyDataSetChanged();
                                 notifyItemRangeChanged(position,myArr.size());
@@ -73,6 +81,7 @@ public class BookingsAdapter extends RecyclerView.Adapter<BookingsAdapter.ViewHo
                         }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
+                        // On failure, dismissing the dialog and displaying a toast message
                         pd.dismiss();
                         Toast.makeText(context,"An error occurred!",Toast.LENGTH_SHORT).show();
                     }
@@ -81,6 +90,7 @@ public class BookingsAdapter extends RecyclerView.Adapter<BookingsAdapter.ViewHo
         });
     }
 
+    // Method to get the size of bookings array list
     @Override
     public int getItemCount() {
         return myArr.size();
@@ -94,6 +104,7 @@ public class BookingsAdapter extends RecyclerView.Adapter<BookingsAdapter.ViewHo
         public ViewHolderClass(@NonNull View itemView) {
             super(itemView);
 
+            // Initializing the required fields
             name_txt = itemView.findViewById(R.id.item_booking_name_text);
             date_txt = itemView.findViewById(R.id.item_booking_date_text);
             time_txt = itemView.findViewById(R.id.item_booking_time_text);
