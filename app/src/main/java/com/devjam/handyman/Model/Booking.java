@@ -1,5 +1,10 @@
 package com.devjam.handyman.Model;
 
+/*
+Booking class
+The bookings made by the user will be stored in objects of this class and will be uploaded to firebase firestore
+*/
+
 public class Booking {
     private String Id;
     private String ServiceId;

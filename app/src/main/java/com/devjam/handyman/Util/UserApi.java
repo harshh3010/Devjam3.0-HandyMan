@@ -2,6 +2,11 @@ package com.devjam.handyman.Util;
 
 import android.app.Activity;
 
+/*
+UserApi class - It is a singleton class
+The only object of this class will store the necessary info about the user and this object can be accessed everywhere in the app
+*/
+
 public class UserApi extends Activity {
 
     private String id;

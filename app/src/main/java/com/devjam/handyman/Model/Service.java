@@ -2,6 +2,11 @@ package com.devjam.handyman.Model;
 
 import java.io.Serializable;
 
+/*
+Service class
+The details of services available to the user will be loaded from firebase firestore as objects of this class
+*/
+
 public class Service implements Serializable {
     private String Id;
     private String Name;

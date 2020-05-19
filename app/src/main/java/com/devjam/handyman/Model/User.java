@@ -1,5 +1,10 @@
 package com.devjam.handyman.Model;
 
+/*
+User class
+The details of the user will be stored in objects of this class
+*/
+
 public class User {
     private String id;
     private String Name;
