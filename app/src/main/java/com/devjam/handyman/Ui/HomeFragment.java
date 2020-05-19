@@ -1,7 +1,6 @@
 package com.devjam.handyman.Ui;
 
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,10 +18,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.devjam.handyman.Model.Service;
 import com.devjam.handyman.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -52,6 +49,7 @@ public class HomeFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home,container,false);
 
+        // Initializing the required fields
         spinner = view.findViewById(R.id.home_fragment_spinner);
         zone_txt = view.findViewById(R.id.home_fragment_zone_text);
         recyclerView = view.findViewById(R.id.home_service_recycler_view);
@@ -61,46 +59,60 @@ public class HomeFragment extends Fragment {
         progressBar2 = view.findViewById(R.id.home_fragment_categories_progress_bar);
         available_txt = view.findViewById(R.id.home_fragment_available_text);
 
+        // Displaying a progress bar only until the cities get loaded
         scrollView.setVisibility(View.GONE);
         progressBar1.setVisibility(View.VISIBLE);
 
+        // Displaying a progress bar only until the service categories under the selected city get loaded
         progressBar2.setVisibility(View.VISIBLE);
         recyclerView.setVisibility(View.GONE);
         zone_txt.setVisibility(View.GONE);
         searchView.setVisibility(View.GONE);
         available_txt.setVisibility(View.GONE);
 
+        // Loading the cities in a spinner
         loadCities();
 
         return  view;
     }
 
+    // Method to load cities in the spinner
     private void loadCities(){
+
+        // Initializing cities array list
         cities = new ArrayList<>();
 
+        // Loading the cities from firebase firestore
         db.collection("Cities")
                 .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+
                 for (QueryDocumentSnapshot ds : queryDocumentSnapshots){
+                    // Storing the cities in the array list
                     cities.add(ds.getId());
                 }
+                // Displaying the cities array list in the spinner
                 citiesAdapter = new ArrayAdapter<>(getContext(),android.R.layout.simple_spinner_item,cities);
                 spinner.setAdapter(citiesAdapter);
 
+                // Hiding the progress bar when the cities get loaded
                 scrollView.setVisibility(View.VISIBLE);
                 progressBar1.setVisibility(View.GONE);
 
+                // On item selected listener for spinner
                 spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
+                        // Displaying the progress bar until the categories get loaded
                         progressBar2.setVisibility(View.VISIBLE);
                         recyclerView.setVisibility(View.GONE);
                         zone_txt.setVisibility(View.GONE);
                         searchView.setVisibility(View.GONE);
                         available_txt.setVisibility(View.GONE);
 
+                        // Obtaining the covid-19 zone of the selected city from firestore and displaying it in a textview
                         final String selectedItem = parent.getItemAtPosition(position).toString();
                         db.collection("Cities")
                                 .document(selectedItem)
@@ -111,6 +123,8 @@ public class HomeFragment extends Fragment {
                                     @Override
                                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                                         String zone = documentSnapshot.get("zone").toString();
+
+                                        // changing the color of textview according to the zone
                                         if(zone.equals("green")){
                                             zone_txt.setText("You are in covid-19 " + zone + " zone");
                                             zone_txt.setTextColor(Color.rgb(0,128,0));
@@ -126,6 +140,7 @@ public class HomeFragment extends Fragment {
                                     }
                                 });
 
+                        // Loading the categories in the selected city from firestore
                         db.collection("Cities")
                                 .document(selectedItem)
                                 .collection("Services")
@@ -133,20 +148,25 @@ public class HomeFragment extends Fragment {
                                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                                     @Override
                                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+
                                         serviceCategories = new ArrayList<>();
                                         for(QueryDocumentSnapshot ds : queryDocumentSnapshots){
+                                            // Loading the categories in the array list
                                             serviceCategories.add(ds.getId());
                                         }
+                                        // Displaying the data in array list in recyclerview with grid layout
                                         serviceCatergoryAdapter = new ServiceCatergoryAdapter(serviceCategories,selectedItem);
                                         recyclerView.setAdapter(serviceCatergoryAdapter);
                                         recyclerView.setLayoutManager(new GridLayoutManager(getContext(),2));
 
+                                        // Hiding the progress bar when the categories get loaded
                                         recyclerView.setVisibility(View.VISIBLE);
                                         progressBar2.setVisibility(View.GONE);
                                         searchView.setVisibility(View.VISIBLE);
                                         available_txt.setVisibility(View.VISIBLE);
                                         zone_txt.setVisibility(View.VISIBLE);
 
+                                        // On query text listener for searchview to filter items in categories recyclerview
                                         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                                             @Override
                                             public boolean onQueryTextSubmit(String query) {
@@ -164,6 +184,7 @@ public class HomeFragment extends Fragment {
                                 }).addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
+                                // Displaying a toast message on failure in loading the categories
                                 Toast.makeText(getContext(),"Unable to load services!",Toast.LENGTH_LONG).show();
                             }
                         });
@@ -178,6 +199,7 @@ public class HomeFragment extends Fragment {
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
+                // Displaying a toast message on failure in loading the cities
                 Toast.makeText(getContext(),"Unable to load cities!",Toast.LENGTH_LONG).show();
             }
         });
