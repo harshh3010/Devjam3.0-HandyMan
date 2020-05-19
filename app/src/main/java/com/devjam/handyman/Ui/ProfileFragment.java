@@ -43,16 +43,19 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
+        // Initializing the required fields
         address_txt = view.findViewById(R.id.profile_fragment_address_text);
         pincode_txt = view.findViewById(R.id.profile_fragment_pincode_text);
         contact_txt = view.findViewById(R.id.profile_fragment_contact_text);
 
+        // Displaying user's info in their respective fields
         ((TextView) view.findViewById(R.id.profile_fragment_name_text)).setText(userApi.getName());
         ((TextView) view.findViewById(R.id.profile_fragment_email_text)).setText(userApi.getEmail());
         address_txt.setText(userApi.getAddress());
         pincode_txt.setText(String.valueOf(userApi.getPincode()));
         contact_txt.setText(String.valueOf(userApi.getContact()));
 
+        // on click listener for make changes button
         view.findViewById(R.id.profile_fragment_edit_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -68,6 +71,7 @@ public class ProfileFragment extends Fragment {
             }
         });
 
+        // On click listener for save changes button
         view.findViewById(R.id.profile_fragment_save_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -82,6 +86,7 @@ public class ProfileFragment extends Fragment {
             }
         });
 
+        // On click listener for logout button
         view.findViewById(R.id.profile_fragment_logout_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -89,6 +94,7 @@ public class ProfileFragment extends Fragment {
             }
         });
 
+        // On click listener for delete account button
         view.findViewById(R.id.profile_fragment_delete_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -98,15 +104,18 @@ public class ProfileFragment extends Fragment {
         return view;
     }
 
+    // Method to update user's data
     private void updateData() {
+
+        // Fetch new data from fields and store in userApi object
         String address = address_txt.getText().toString().trim();
         int pincode = Integer.parseInt(pincode_txt.getText().toString());
         long contact = Long.parseLong(contact_txt.getText().toString());
-
         userApi.setAddress(address);
         userApi.setPincode(pincode);
         userApi.setContact(contact);
 
+        // Update the data to firestore
         db.collection("Users")
                 .document(userApi.getEmail())
                 .update("address", userApi.getAddress())
@@ -136,7 +145,10 @@ public class ProfileFragment extends Fragment {
                 });
     }
 
+    // Method to logout user
     private void logoutUser() {
+
+        // Show confirmation dialog
         final AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getContext()), R.style.MyAlertDialogStyle);
         builder.setTitle("Sign-out");
         builder.setMessage("Do you really wish to sign out?");
@@ -144,6 +156,8 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
+
+                // Signing-out the firebase authentication user and redirecting to login screen
                 firebaseAuth.signOut();
                 startActivity(new Intent(getContext(), LoginActivity.class));
                 Objects.requireNonNull(getActivity()).finish();
@@ -158,7 +172,9 @@ public class ProfileFragment extends Fragment {
         builder.show();
     }
 
+    // Method to delete account
     private void deleteAccount() {
+        // Displaying a dialog to ask user for account password
         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getContext(), R.style.MyAlertDialogStyle);
         builder.setTitle("Delete Account");
         builder.setMessage("Please enter your password to continue.");
@@ -178,12 +194,14 @@ public class ProfileFragment extends Fragment {
                 if (password.isEmpty()) {
                     input.setError("Please enter password to proceed.");
                 } else {
+                    // Reauthenticate the user with email and entered password
                     AuthCredential credential = EmailAuthProvider
                             .getCredential(userApi.getEmail(), password);
                     Objects.requireNonNull(firebaseAuth.getCurrentUser()).reauthenticate(credential)
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
+                                    // Deleting the account on success
                                     dialog.dismiss();
                                     removeUserData();
                                 }
@@ -206,15 +224,22 @@ public class ProfileFragment extends Fragment {
         builder.show();
     }
 
+    //  Method to remove user's data
     private void removeUserData(){
+
+        // Displaying a progress dialog until the background tasks are performed
         pd = new ProgressDialog(getContext(),R.style.AppCompatAlertDialogStyle);
         pd.setMessage("Please wait...");
         pd.show();
+
+        // Delete the firebase user
         Objects.requireNonNull(firebaseAuth.getCurrentUser())
                 .delete()
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
+
+                        // Deleting the user's data from firestore
                         db.collection("Users")
                                 .document(userApi.getEmail())
                                 .delete();
@@ -224,6 +249,8 @@ public class ProfileFragment extends Fragment {
                 }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
+
+                // On failure in deleting the user, displayig a toast message
                 pd.dismiss();
                 Toast.makeText(getContext(),"Unable to remove account!",Toast.LENGTH_SHORT).show();
             }
