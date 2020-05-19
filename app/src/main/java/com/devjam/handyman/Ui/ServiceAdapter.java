@@ -18,20 +18,19 @@ import com.devjam.handyman.R;
 
 import java.util.ArrayList;
 
-public class ServiceAdapter extends RecyclerView.Adapter<ServiceAdapter.ViewHolderClass> implements Filterable {
+public class ServiceAdapter extends RecyclerView.Adapter<ServiceAdapter.ViewHolderClass> {
 
     private ArrayList<Service> myArr;
-    private ArrayList<Service> myArrFull;
     private Context context;
 
     public ServiceAdapter(ArrayList<Service> myArr,String city) {
         this.myArr = myArr;
-        myArrFull = new ArrayList<>(myArr);
     }
 
     @NonNull
     @Override
     public ViewHolderClass onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        // Inflating the item view to be displayed in recyclerview
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_view_service_details,parent,false);
         context = parent.getContext();
         return new ViewHolderClass(view);
@@ -39,6 +38,8 @@ public class ServiceAdapter extends RecyclerView.Adapter<ServiceAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolderClass holder, int position) {
+
+        // Displaying the necessary data in their respective fields
         holder.name_txt.setText(myArr.get(position).getName());
         if(Double.parseDouble(myArr.get(position).getCost()) != 0){
             holder.price_txt.setText("Rs " + myArr.get(position).getCost());
@@ -47,54 +48,28 @@ public class ServiceAdapter extends RecyclerView.Adapter<ServiceAdapter.ViewHold
         }
     }
 
+    // Method to get the size of services array list
     @Override
     public int getItemCount() {
         return myArr.size();
     }
 
-    @Override
-    public Filter getFilter() {
-        return filter;
-    }
-
-    private Filter filter = new Filter() {
-        @Override
-        protected FilterResults performFiltering(CharSequence constraint) {
-            ArrayList<Service> filteredList = new ArrayList<>();
-            if(constraint == null || constraint.length()==0){
-                filteredList.addAll(myArrFull);
-            }else{
-                String filterPattern = constraint.toString().toLowerCase().trim();
-                for(Service service : myArrFull){
-                    if(service.getName().toLowerCase().contains(filterPattern)){
-                        filteredList.add(service);
-                    }
-                }
-            }
-            FilterResults results = new FilterResults();
-            results.values = filteredList;
-
-            return results;
-        }
-
-        @Override
-        protected void publishResults(CharSequence constraint, FilterResults results) {
-            myArr.clear();
-            myArr.addAll((ArrayList) results.values);
-            notifyDataSetChanged();
-        }
-    };
 
     public class ViewHolderClass extends RecyclerView.ViewHolder {
         public TextView name_txt,price_txt;
         public ViewHolderClass(@NonNull View itemView) {
             super(itemView);
+
+            // Initializing the required fields
             name_txt = itemView.findViewById(R.id.item_service_name_text);
             price_txt = itemView.findViewById(R.id.item_service_price_text);
 
+            // On click listener for item view
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+
+                    // Passing the service object to Booking Activity
                     Intent intent = new Intent(context, BookingActivity.class);
                     intent.putExtra("service",myArr.get(getAdapterPosition()));
                     context.startActivity(intent);
