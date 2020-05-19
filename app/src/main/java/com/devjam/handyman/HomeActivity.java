@@ -15,7 +15,6 @@ import android.widget.Toast;
 
 import com.devjam.handyman.Ui.HomeFragment;
 import com.devjam.handyman.Ui.MyBookingsFragment;
-import com.devjam.handyman.Ui.NotificationFragment;
 import com.devjam.handyman.Ui.ProfileFragment;
 import com.devjam.handyman.Util.UserApi;
 import com.google.android.material.navigation.NavigationView;
@@ -80,10 +79,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         switch (menuItem.getItemId()) {
             case R.id.navigation_home:
                 getSupportFragmentManager().beginTransaction().replace(R.id.home_fragment_container, new HomeFragment()).commit();
-                drawerLayout.closeDrawer(Gravity.LEFT);
-                break;
-            case R.id.navigation_notifications:
-                getSupportFragmentManager().beginTransaction().replace(R.id.home_fragment_container, new NotificationFragment()).commit();
                 drawerLayout.closeDrawer(Gravity.LEFT);
                 break;
             case R.id.navigation_profile:
